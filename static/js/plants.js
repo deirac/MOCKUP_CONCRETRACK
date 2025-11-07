@@ -51,12 +51,12 @@ const Plants = (function() {
                     <td>${plant.location}</td>
                     <td>
                         <span class="fw-bold">${plant.capacity}</span>
-                        <small class="text-muted"> m³/día</small>
+                        <small class="text-muted"> m³/h</small>
                     </td>
                     <td>${statusBadge}</td>
                     <td>${mixesHTML}</td>
                     <td>
-                        <span class="fw-bold">${plant.trucks_available}</span>
+                        <span class="fw-bold">${plant.transport}</span>
                         <small class="text-muted"> disponibles</small>
                     </td>
                     <td>${plant.manager}</td>
@@ -113,7 +113,7 @@ const Plants = (function() {
                     </div>
                     <div class="plant-detail-item">
                         <div class="plant-detail-label">Capacidad</div>
-                        <div class="plant-detail-value">${plant.capacity} m³/día</div>
+                        <div class="plant-detail-value">${plant.capacity} m³/h</div>
                     </div>
                     <div class="plant-detail-item">
                         <div class="plant-detail-label">Estado</div>
@@ -137,8 +137,8 @@ const Plants = (function() {
                         <div class="plant-detail-value">${lastMaintenance}</div>
                     </div>
                     <div class="plant-detail-item">
-                        <div class="plant-detail-label">Camiones Disponibles</div>
-                        <div class="plant-detail-value">${plant.trucks_available}</div>
+                        <div class="plant-detail-label">Transporte</div>
+                        <div class="plant-detail-value">${plant.transport}</div>
                     </div>
                 </div>
             </div>

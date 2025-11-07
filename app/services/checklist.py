@@ -7,13 +7,13 @@ class ChecklistService:
     Service class for concrete pouring checklists management
     """
     
-    # Mock database for checklists
+    # Mock database for checklists - ACTUALIZADO para coincidir con OrdersService
     _checklists_db = [
         ConcreteChecklist(
             id=1,
-            order_id=2,
-            project_name="Centro Comercial Plaza",
-            supervisor="Ing. Roberto Jiménez",
+            order_id=2,  # Orden 2: VITTRIO - ZAPATA H-12 TORRE 4
+            project_name="VITTRIO",
+            supervisor="Ing. Manuela Jimenez",
             scheduled_time=datetime.now(),
             status="in_progress",
             created_at=datetime.now() - timedelta(hours=2),
@@ -31,7 +31,7 @@ class ChecklistService:
                     category="pre_vaciado",
                     description="Confirmar disponibilidad de mezcla C-25",
                     completed=True,
-                    notes="Mezcla confirmada en Planta Sur"
+                    notes="Mezcla confirmada en PLANTA 2"
                 ),
                 ChecklistItem(
                     id=3,
@@ -65,9 +65,9 @@ class ChecklistService:
         ),
         ConcreteChecklist(
             id=2,
-            order_id=1,
-            project_name="Torre Norte",
-            supervisor="Ing. Carlos Mendoza",
+            order_id=1,  # Orden 1: VITTRIO - ZAPATA A-1 TORRE 1
+            project_name="VITTRIO",
+            supervisor="Ing. UnIngenieroCivil",
             scheduled_time=datetime.now() + timedelta(hours=2),
             status="pending",
             created_at=datetime.now() - timedelta(days=1),
@@ -85,12 +85,12 @@ class ChecklistService:
                     category="pre_vaciado",
                     description="Confirmar disponibilidad de mezcla C-30",
                     completed=True,
-                    notes="Mezcla confirmada en Planta Central"
+                    notes="Mezcla confirmada en PLANTA 1"
                 ),
                 ChecklistItem(
                     id=3,
                     category="pre_vaciado",
-                    description="Verificar equipo de bombeo de 42 metros",
+                    description="Verificar equipo de bombeo de 43.5 metros",
                     completed=True,
                     notes="Bomba confirmada y en ruta"
                 )
@@ -98,9 +98,9 @@ class ChecklistService:
         ),
         ConcreteChecklist(
             id=3,
-            order_id=3,
-            project_name="Residencial Jardines",
-            supervisor="Téc. Ana López",
+            order_id=3,  # Orden 3: CRISTALI - PROVICIONALES
+            project_name="CRISTALI",
+            supervisor="Ing. Manuela Jimenez",
             scheduled_time=datetime.now() - timedelta(hours=8),
             status="completed",
             created_at=datetime.now() - timedelta(days=1),
@@ -140,6 +140,44 @@ class ChecklistService:
                     description="Limpieza final del área",
                     completed=True,
                     notes="Área limpiada y equipos guardados"
+                )
+            ]
+        ),
+        ConcreteChecklist(
+            id=4,
+            order_id=4,  # Orden 4: VITTRIO - Pedestales eje 9 (H-I-J)
+            project_name="VITTRIO",
+            supervisor="Ing. Juan Pulgarín",
+            scheduled_time=datetime.now() + timedelta(days=1),
+            status="cancelled",
+            created_at=datetime.now() - timedelta(hours=2),
+            completed_at=None,
+            items=[
+                ChecklistItem(
+                    id=1,
+                    category="pre_vaciado",
+                    description="Verificar limpieza y preparación del área de vaciado",
+                    completed=False,
+                    notes="Checklist cancelado junto con la orden"
+                )
+            ]
+        ),
+        ConcreteChecklist(
+            id=5,
+            order_id=5,  # Orden 5: CRISTALI - Plancha sotano nivel -3
+            project_name="CRISTALI",
+            supervisor="Ing. UnIngenieroCivil",
+            scheduled_time=datetime.now() + timedelta(days=2),
+            status="cancelled",
+            created_at=datetime.now() - timedelta(days=3),
+            completed_at=None,
+            items=[
+                ChecklistItem(
+                    id=1,
+                    category="pre_vaciado",
+                    description="Verificar limpieza y preparación del área de vaciado",
+                    completed=False,
+                    notes="Checklist cancelado por condiciones climáticas"
                 )
             ]
         )

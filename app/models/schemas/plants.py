@@ -2,19 +2,18 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import datetime, date
 
-# ... (schemas existentes se mantienen)
 
 class ConcretePlant(BaseModel):
     id: int
     name: str
     location: str
-    capacity: float  # m³ per day
+    capacity: float  # m³ per hour
     status: str  # active, maintenance, inactive
     manager: str
     phone: str
     email: str
     mixes_available: List[str]
-    trucks_available: int
+    transport : Optional[str] = None
     last_maintenance: datetime
     notes: Optional[str] = None
 
@@ -23,7 +22,7 @@ class PlantProduction(BaseModel):
     date: date
     total_production: float  # m³
     mixes_produced: Dict[str, float]  # mix_type: volume
-    trucks_dispatched: int
+    transport : Optional[str] = None
     efficiency: Optional[float] = None
 
 class PlantSummary(BaseModel):

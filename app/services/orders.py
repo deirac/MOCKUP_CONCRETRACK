@@ -13,30 +13,30 @@ class OrdersService:
             id=1,
             project_id=101,
             project_name="VITTRIO",
-            client="Constructora ABC",
+            client="Ing. UnIngenieroCivil",  # Cambiado aquí
             mix_type="C-30",
             volume=45.5,
             status="scheduled",
             scheduled_time=datetime.now() + timedelta(hours=3),
-            address="Av. Constructores 123, Zona Industrial",
+            address="ZAPATA A-1 TORRE 1",
             priority="high",
-            assigned_plant="Planta Central",
+            assigned_plant="PLANTA 1",
             estimated_duration=4.5,
             created_at=datetime.now() - timedelta(days=1),
-            notes="Requiere bomba de 42 metros"
+            notes="Requiere bomba de 43.5 metros"
         ),
         ConcreteOrder(
             id=2,
             project_id=102,
-            project_name="Centro Comercial Plaza",
-            client="Desarrolladora XYZ",
+            project_name="VITTRIO",
+            client="Ing. Manuela Jimenez",
             mix_type="C-25",
-            volume=28.0,
+            volume=35.0,
             status="in_progress",
             scheduled_time=datetime.now(),
-            address="Centro Ciudad, Calle Principal 456",
+            address="ZAPATA H-12 TORRE 4",
             priority="medium",
-            assigned_plant="Planta Sur",
+            assigned_plant="PLANTA 2",
             estimated_duration=3.0,
             created_at=datetime.now() - timedelta(hours=6),
             notes="Coordinación con jefe de obra necesaria"
@@ -44,62 +44,63 @@ class OrdersService:
         ConcreteOrder(
             id=3,
             project_id=103,
-            project_name="Residencial Jardines",
-            client="Inmobiliaria Sur",
+            project_name="CRISTALI",
+            client="Ing. Manuela Jimenez",
             mix_type="C-20",
-            volume=15.0,
+            volume=5.0,
             status="completed",
             scheduled_time=datetime.now() - timedelta(hours=8),
-            address="Sector Residencial Norte, Manzana 5",
+            address="PROVICIONALES",
             priority="low",
-            assigned_plant="Planta Este",
-            estimated_duration=2.0,
+            assigned_plant="PLANTA 1",
+            estimated_duration=1.0,
             created_at=datetime.now() - timedelta(days=1),
             notes="Vaciado completado satisfactoriamente"
         ),
         ConcreteOrder(
             id=4,
             project_id=104,
-            project_name="Hospital Regional",
-            client="Gobierno Estatal",
+            project_name="VITTRIO",
+            client="Ing. Juan Pulgarín",
             mix_type="C-35",
-            volume=60.0,
-            status="preparing",
+            volume=35.0,
+            status="cancelled",
             scheduled_time=datetime.now() + timedelta(days=1),
-            address="Zona Médica, Av. Salud 789",
+            address="Pedestales eje 9 (H-I-J)",
             priority="high",
-            assigned_plant="Planta Central",
+            assigned_plant="PLANTA 1",
             estimated_duration=6.0,
             created_at=datetime.now() - timedelta(hours=2),
-            notes="Concreto especial para cimientos hospitalarios"
+            notes="Concreto especial para cimientos de pedestales"
         ),
         ConcreteOrder(
             id=5,
             project_id=105,
-            project_name="Edificio Corporativo",
-            client="Empresa Global S.A.",
+            project_name="CRISTALI",
+            client="Ing. UnIngenieroCivil",  # Cambiado aquí
             mix_type="C-30",
-            volume=35.0,
+            volume=25.0,
             status="cancelled",
             scheduled_time=datetime.now() + timedelta(days=2),
-            address="Distrito Financiero, Torre B",
+            address="Plancha sotano nivel -3",
             priority="medium",
-            assigned_plant="Planta Oeste",
+            assigned_plant="PLANTA 2",
             estimated_duration=4.0,
             created_at=datetime.now() - timedelta(days=3),
             notes="Cancelado por condiciones climáticas"
         )
     ]
     
-    # Simple projects list (no need for Project class)
+    # Projects database - ACTUALIZADO con el nombre correcto
     _projects_db = [
-        {"id": 101, "name": "Torre Norte", "client": "Constructora ABC", "location": "Zona Industrial", "start_date": datetime.now() - timedelta(days=30), "status": "active"},
-        {"id": 102, "name": "Centro Comercial Plaza", "client": "Desarrolladora XYZ", "location": "Centro Ciudad", "start_date": datetime.now() - timedelta(days=15), "status": "active"},
-        {"id": 103, "name": "Residencial Jardines", "client": "Inmobiliaria Sur", "location": "Sector Residencial", "start_date": datetime.now() - timedelta(days=7), "status": "active"},
-        {"id": 104, "name": "Hospital Regional", "client": "Gobierno Estatal", "location": "Zona Médica", "start_date": datetime.now() - timedelta(days=45), "status": "active"},
-        {"id": 105, "name": "Edificio Corporativo", "client": "Empresa Global S.A.", "location": "Distrito Financiero", "start_date": datetime.now() - timedelta(days=10), "status": "on_hold"},
+        {"id": 101, "name": "VITTRIO", "client": "Ing. UnIngenieroCivil", "location": "ZAPATA A-1 TORRE 1", "start_date": datetime.now() - timedelta(days=30), "status": "active"},
+        {"id": 102, "name": "VITTRIO", "client": "Ing. Manuela Jimenez", "location": "ZAPATA H-12 TORRE 4", "start_date": datetime.now() - timedelta(days=15), "status": "active"},
+        {"id": 103, "name": "CRISTALI", "client": "Ing. Manuela Jimenez", "location": "PROVICIONALES", "start_date": datetime.now() - timedelta(days=7), "status": "active"},
+        {"id": 104, "name": "VITTRIO", "client": "Ing. Juan Pulgarín", "location": "Pedestales eje 9 (H-I-J)", "start_date": datetime.now() - timedelta(days=45), "status": "active"},
+        {"id": 105, "name": "CRISTALI", "client": "Ing. UnIngenieroCivil", "location": "Plancha sotano nivel -3", "start_date": datetime.now() - timedelta(days=10), "status": "on_hold"},
     ]
     
+    # ... (el resto de los métodos se mantiene igual)
     @staticmethod
     def get_all_orders() -> List[ConcreteOrder]:
         """
