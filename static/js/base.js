@@ -68,3 +68,63 @@ function showNotification(message, type = 'info') {
     // You can implement a toast notification system here
     console.log(`${type.toUpperCase()}: ${message}`);
 }
+
+// ... (código existente)
+
+// Auth utility functions
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+}
+
+function validatePassword(password) {
+    return password.length >= 6;
+}
+
+function validatePhone(phone) {
+    const re = /^[\+]?[1-9][\d]{0,15}$/;
+    return re.test(phone.replace(/\s/g, ''));
+}
+
+// Add form validation for auth pages
+function initializeAuthForms() {
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!validateEmail(email)) {
+                e.preventDefault();
+                showNotification('Por favor ingresa un email válido', 'error');
+                return false;
+            }
+            
+            if (!validatePassword(password)) {
+                e.preventDefault();
+                showNotification('La contraseña debe tener al menos 6 caracteres', 'error');
+                return false;
+            }
+        });
+    }
+    
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                showNotification('Las contraseñas no coinciden', 'error');
+                return false;
+            }
+        });
+    }
+}
+
+// Initialize auth forms when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAuthForms();
+});

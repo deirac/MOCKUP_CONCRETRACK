@@ -1,0 +1,170 @@
+/* ================================
+   Auth Pages - Responsive Styles
+   ================================ */
+
+:root {
+    --dark-gray: #343a40;
+    --light-gray: #6c757d;
+    --hover-color: #3498db;
+}
+
+/* --- Layout general --- */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9f3fc 100%);
+    padding: 2rem;
+}
+
+/* --- Card principal --- */
+.auth-card {
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    padding: 2rem;
+    width: 90%;
+    max-width: 480px;
+    transition: all 0.3s ease;
+    animation: slideUp 0.5s ease-out;
+}
+
+/* --- Card especial para registro --- */
+.register-card {
+    max-width: 600px;
+}
+
+/* --- Encabezado del formulario --- */
+.auth-header {
+    text-align: center;
+    padding-bottom: 1.5rem;
+}
+
+.auth-title {
+    color: var(--dark-gray);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.auth-subtitle {
+    color: var(--light-gray);
+    margin-bottom: 0;
+}
+
+/* --- Formulario --- */
+.auth-form .form-label {
+    font-weight: 500;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+}
+
+.auth-form .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.auth-form .form-control:focus {
+    border-color: var(--hover-color);
+    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.auth-form .btn {
+    border-radius: 0.5rem;
+    padding: 0.75rem 2rem;
+    font-weight: 500;
+    width: 100%;
+}
+
+/* --- Footer --- */
+.auth-footer {
+    border-top: 1px solid #e9ecef;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+/* --- Credenciales demo (si las hay) --- */
+.demo-credentials {
+    margin-top: 2rem;
+}
+
+.demo-credentials .card {
+    border-radius: 0.5rem;
+}
+
+/* --- Animación --- */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================
+   MEDIA QUERIES - Responsividad
+   ================================ */
+
+/* 📱 Teléfonos pequeños */
+@media (max-width: 576px) {
+    .auth-card {
+        width: 100%;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+}
+
+/* 📱 Pantallas medianas (tablets verticales) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .auth-card {
+        max-width: 450px;
+        padding: 2rem;
+    }
+}
+
+/* 💻 Pantallas grandes (tablets horizontales / laptops) */
+@media (min-width: 769px) and (max-width: 1199px) {
+    .auth-card {
+        max-width: 550px;
+        padding: 2.5rem;
+    }
+
+    .register-card {
+        max-width: 650px;
+    }
+}
+
+/* 🖥️ Pantallas extra grandes (desktops grandes) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+    .auth-card {
+        max-width: 650px;
+        padding: 3rem;
+    }
+
+    .register-card {
+        max-width: 750px;
+    }
+}
+
+/* 🧭 Pantallas ultra grandes (4K, monitores amplios) */
+@media (min-width: 1600px) {
+    .auth-card {
+        max-width: 750px;
+        padding: 3.5rem;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    }
+
+    .register-card {
+        max-width: 850px;
+    }
+}
