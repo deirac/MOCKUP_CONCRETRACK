@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}Checklists de Vaciado - {{ project_name }}{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/checklist.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-2">
+                    <i class="bi bi-check-square me-2 text-success"></i>
+                    Checklists de Vaciado
+                </h1>
+                <p class="text-muted mb-0">Control y verificación de procesos de vaciado</p>
+            </div>
+            <div>
+                <button class="btn btn-success me-2" onclick="Checklist.showCreateModal()">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Nuevo Checklist
+                </button>
+                <button class="btn btn-outline-primary" onclick="Checklist.loadChecklistsData()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    Actualizar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Total Checklists</h6>
+                        <h3 class="text-primary" id="total-checklists">0</h3>
+                    </div>
+                    <div class="icon-container bg-primary">
+                        <i class="bi bi-clipboard-check text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Hoy</h6>
+                        <h3 class="text-warning" id="todays-checklists">0</h3>
+                    </div>
+                    <div class="icon-container bg-warning">
+                        <i class="bi bi-calendar-day text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">En Progreso</h6>
+                        <h3 class="text-info" id="in-progress">0</h3>
+                    </div>
+                    <div class="icon-container bg-info">
+                        <i class="bi bi-clock text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Tasa Completado</h6>
+                        <h3 class="text-success" id="completion-rate">0%</h3>
+                    </div>
+                    <div class="icon-container bg-success">
+                        <i class="bi bi-graph-up text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Bars -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title mb-3">Progreso General</h6>
+                <div class="progress mb-2" style="height: 20px;">
+                    <div class="progress-bar bg-success" role="progressbar" id="overall-progress" style="width: 0%">
+                        <span class="progress-text">0%</span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span id="completed-items">0</span>
+                    <span id="total-items">0 items total</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-4">
+                        <label for="status-filter" class="form-label">Filtrar por Estado</label>
+                        <select class="form-select" id="status-filter" onchange="Checklist.filterChecklists()">
+                            <option value="all">Todos los estados</option>
+                            <option value="pending">Pendientes</option>
+                            <option value="in_progress">En Progreso</option>
+                            <option value="completed">Completados</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="category-filter" class="form-label">Filtrar por Categoría</label>
+                        <select class="form-select" id="category-filter" onchange="Checklist.filterChecklists()">
+                            <option value="all">Todas las categorías</option>
+                            <option value="pre_vaciado">Pre-Vaciado</option>
+                            <option value="seguridad">Seguridad</option>
+                            <option value="calidad">Calidad</option>
+                            <option value="post_vaciado">Post-Vaciado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-outline-secondary w-100" onclick="Checklist.clearFilters()">
+                            <i class="bi bi-x-circle me-2"></i>Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Checklists Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list-check me-2"></i>
+                    Lista de Checklists
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="checklists-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proyecto</th>
+                                <th>Supervisor</th>
+                                <th>Programación</th>
+                                <th>Estado</th>
+                                <th>Progreso</th>
+                                <th>Items</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="checklists-table-body">
+                            <!-- Checklists data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="checklists-loading" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="text-muted">Cargando checklists...</p>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="checklists-empty" class="text-center py-5 d-none">
+                    <i class="bi bi-clipboard-x display-4 text-muted mb-3"></i>
+                    <p class="text-muted">No hay checklists registrados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Checklist Details Modal -->
+<div class="modal fade" id="checklistModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checklistModalLabel">
+                    <i class="bi bi-check-square me-2"></i>
+                    Detalles de Checklist
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="checklistModalBody">
+                <!-- Checklist details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Checklist Modal -->
+<div class="modal fade" id="createChecklistModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Crear Nuevo Checklist
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="create-checklist-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="order-id" class="form-label">ID de Orden *</label>
+                            <input type="number" class="form-control" id="order-id" min="1" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="project-name" class="form-label">Nombre del Proyecto *</label>
+                            <input type="text" class="form-control" id="project-name" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="supervisor" class="form-label">Supervisor *</label>
+                            <input type="text" class="form-control" id="supervisor" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="scheduled-time" class="form-label">Fecha y Hora Programada *</label>
+                            <input type="datetime-local" class="form-control" id="scheduled-time" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Categorías a Incluir *</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="category-pre" value="pre_vaciado" checked>
+                                    <label class="form-check-label" for="category-pre">
+                                        Pre-Vaciado
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="category-seguridad" value="seguridad" checked>
+                                    <label class="form-check-label" for="category-seguridad">
+                                        Seguridad
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="category-calidad" value="calidad" checked>
+                                    <label class="form-check-label" for="category-calidad">
+                                        Calidad
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="category-post" value="post_vaciado">
+                                    <label class="form-check-label" for="category-post">
+                                        Post-Vaciado
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="Checklist.createChecklist()">Crear Checklist</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/checklist.js"></script>
+<script>
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        Checklist.init();
+        Checklist.loadChecklistsSummary();
+        Checklist.loadChecklistsData();
+    });
+</script>
+{% endblock %}

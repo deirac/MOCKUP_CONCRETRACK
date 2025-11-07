@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Inventario de Materiales - {{ project_name }}{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/inventory.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-2">
+                    <i class="bi bi-box-seam me-2 text-warning"></i>
+                    Inventario de Materiales
+                </h1>
+                <p class="text-muted mb-0">Gestión y control de materiales para mezcla de concreto</p>
+            </div>
+            <div>
+                <button class="btn btn-success me-2" onclick="Inventory.calculateRequirements()">
+                    <i class="bi bi-calculator me-2"></i>
+                    Calcular Requerimientos
+                </button>
+                <button class="btn btn-outline-primary" onclick="Inventory.loadInventoryData()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    Actualizar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Total Materiales</h6>
+                        <h3 class="text-primary" id="total-materials">0</h3>
+                    </div>
+                    <div class="icon-container bg-primary">
+                        <i class="bi bi-box text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Valor Total</h6>
+                        <h3 class="text-success" id="total-value">$0</h3>
+                    </div>
+                    <div class="icon-container bg-success">
+                        <i class="bi bi-currency-dollar text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Críticos/Bajos</h6>
+                        <h3 class="text-danger" id="critical-materials">0</h3>
+                    </div>
+                    <div class="icon-container bg-danger">
+                        <i class="bi bi-exclamation-triangle text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Óptimos</h6>
+                        <h3 class="text-info" id="optimal-materials">0</h3>
+                    </div>
+                    <div class="icon-container bg-info">
+                        <i class="bi bi-check-circle text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title mb-3">Acciones Rápidas</h6>
+                <div class="row g-2">
+                    <div class="col-md-3 col-6">
+                        <button class="btn btn-outline-warning w-100" onclick="Inventory.filterByStatus('critical')">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Ver Críticos
+                        </button>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <button class="btn btn-outline-info w-100" onclick="Inventory.filterByStatus('low')">
+                            <i class="bi bi-arrow-down me-2"></i>
+                            Ver Bajos
+                        </button>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <button class="btn btn-outline-success w-100" onclick="Inventory.filterByStatus('optimal')">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Ver Óptimos
+                        </button>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <button class="btn btn-outline-secondary w-100" onclick="Inventory.clearFilters()">
+                            <i class="bi bi-eye me-2"></i>
+                            Ver Todos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list-ul me-2"></i>
+                    Lista de Materiales
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Stock Actual</th>
+                                <th>Mín/Máx</th>
+                                <th>Estado</th>
+                                <th>Proveedor</th>
+                                <th>Costo Unitario</th>
+                                <th>Valor Total</th>
+                                <th>Última Recarga</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <!-- Inventory data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="inventory-loading" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="text-muted">Cargando inventario...</p>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="inventory-empty" class="text-center py-5 d-none">
+                    <i class="bi bi-inbox display-4 text-muted mb-3"></i>
+                    <p class="text-muted">No hay materiales en inventario</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Material Details Modal -->
+<div class="modal fade" id="materialModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="materialModalLabel">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Detalles de Material
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="materialModalBody">
+                <!-- Material details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Requirements Calculator Modal -->
+<div class="modal fade" id="requirementsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-calculator me-2"></i>
+                    Calculadora de Requerimientos
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="requirements-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="mix-type-calc" class="form-label">Tipo de Mezcla *</label>
+                            <select class="form-select" id="mix-type-calc" required>
+                                <option value="">Seleccionar mezcla...</option>
+                                <option value="C-20">C-20 - Concreto Normal</option>
+                                <option value="C-25">C-25 - Concreto Estructural</option>
+                                <option value="C-30">C-30 - Concreto High-Strength</option>
+                                <option value="C-35">C-35 - Concreto Premium</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="volume-calc" class="form-label">Volumen (m³) *</label>
+                            <input type="number" class="form-control" id="volume-calc" step="0.1" min="1" required>
+                        </div>
+                    </div>
+                </form>
+                
+                <div id="requirements-result" class="mt-4 d-none">
+                    <h6>Resultados del Cálculo:</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm" id="requirements-table">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Cantidad Requerida</th>
+                                    <th>Stock Disponible</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requirements-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="Inventory.calculateMaterialRequirements()">Calcular</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Stock Modal -->
+<div class="modal fade" id="updateStockModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateStockModalLabel">
+                    <i class="bi bi-arrow-up-down me-2"></i>
+                    Actualizar Stock
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="update-stock-form">
+                    <div class="mb-3">
+                        <label for="new-stock" class="form-label">Nuevo Stock</label>
+                        <input type="number" class="form-control" id="new-stock" step="0.1" min="0" required>
+                        <div class="form-text" id="stock-unit"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="Inventory.updateStock()">Actualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/inventory.js"></script>
+<script>
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        Inventory.init();
+        Inventory.loadInventorySummary();
+        Inventory.loadInventoryData();
+    });
+</script>
+{% endblock %}
