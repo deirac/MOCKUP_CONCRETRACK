@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Vaciado de Concreto{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/home.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold text-dark mb-4">
+                Sistema de Vaciado de Concreto
+            </h1>
+            <p class="lead text-muted mb-4">
+                Gestión integral de órdenes, proyectos y programación de vaciado de concreto.
+            </p>
+            <div class="d-flex gap-3 flex-wrap">
+                <a href="/orders" class="btn btn-primary btn-lg">
+                    <i class="bi bi-truck me-2"></i>Ver Órdenes
+                </a>
+                <a href="/projects" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-building me-2"></i>Proyectos
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="hero-image bg-light rounded-3 p-4">
+                <i class="bi bi-cone-striped display-1 text-warning"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="h3 mb-4">
+                <i class="bi bi-speedometer2 me-2"></i>
+                Resumen del Día
+            </h2>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Active Orders -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-muted mb-2">Órdenes Activas</h6>
+                            <h3 class="text-primary mb-0">{{ dashboard.active_orders }}</h3>
+                            <small class="text-success">
+                                <i class="bi bi-arrow-up"></i> {{ dashboard.upcoming_schedules }} programadas
+                            </small>
+                        </div>
+                        <div class="icon-container bg-primary">
+                            <i class="bi bi-clipboard-check text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Today -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-muted mb-2">Completadas Hoy</h6>
+                            <h3 class="text-success mb-0">{{ dashboard.completed_orders_today }}</h3>
+                            <small class="text-success">
+                                <i class="bi bi-check-circle"></i> Al día
+                            </small>
+                        </div>
+                        <div class="icon-container bg-success">
+                            <i class="bi bi-check-square text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Concrete Volume -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-muted mb-2">Volumen Hoy (m³)</h6>
+                            <h3 class="text-warning mb-0">{{ dashboard.concrete_volume_today }}</h3>
+                            <small class="text-success">
+                                <i class="bi bi-arrow-up"></i> {{ dashboard.pending_deliveries }} pendientes
+                            </small>
+                        </div>
+                        <div class="icon-container bg-warning">
+                            <i class="bi bi-water text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Today -->
+        <div class="col-md-3 col-sm-6">
+            <div class="card stat-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="card-title text-muted mb-2">Ingresos Hoy</h6>
+                            <h3 class="text-info mb-0">${{ dashboard.revenue_today }}</h3>
+                            <small class="text-success">
+                                <i class="bi bi-arrow-up"></i> {{ dashboard.available_mixes }} mezclas
+                            </small>
+                        </div>
+                        <div class="icon-container bg-info">
+                            <i class="bi bi-currency-dollar text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Today's Schedule -->
+<section class="schedule-section mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-calendar-day me-2"></i>
+                        Programación de Hoy
+                    </h5>
+                    <span class="badge bg-primary">{{ dashboard.active_orders }} Órdenes</span>
+                </div>
+                <div class="card-body">
+                    <div id="schedule-container" class="schedule-container">
+                        <!-- Schedule will be loaded via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section class="actions-section mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="h3 mb-4">
+                <i class="bi bi-lightning me-2"></i>
+                Acciones Rápidas
+            </h2>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <button class="btn btn-outline-primary w-100 action-btn" onclick="Home.loadSchedule()">
+                <i class="bi bi-calendar-check me-2"></i>
+                Ver Programación
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-success w-100 action-btn" onclick="Home.loadProjects()">
+                <i class="bi bi-building me-2"></i>
+                Ver Proyectos
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-warning w-100 action-btn" onclick="Home.loadMixes()">
+                <i class="bi bi-droplet me-2"></i>
+                Ver Mezclas
+            </button>
+        </div>
+        <div class="col-md-3">
+            <button class="btn btn-outline-info w-100 action-btn" onclick="Home.loadStats()">
+                <i class="bi bi-graph-up me-2"></i>
+                Ver Estadísticas
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Data Container -->
+<section class="data-section">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-data me-2"></i>
+                        Datos del Sistema
+                    </h5>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="Home.clearData()">
+                        <i class="bi bi-x-circle me-1"></i>Limpiar
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="data-container" class="data-container">
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-cone-striped display-4 d-block mb-2"></i>
+                            <p class="mb-0">Selecciona una acción para cargar datos</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/home.js"></script>
+<script>
+    // Cargar programación al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        Home.init();
+        Home.loadSchedule();
+    });
+</script>
+{% endblock %}

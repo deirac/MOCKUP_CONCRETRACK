@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Registro - {{ project_name }}{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/auth.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5"> <!-- Columnas más flexibles -->
+            <div class="auth-card register-card"> <!-- Clase adicional para register -->
+                <div class="auth-header text-center mb-4">
+                    <i class="bi bi-person-plus display-4 text-primary mb-3"></i>
+                    <h2 class="auth-title">Crear Cuenta</h2>
+                    <p class="text-muted">Regístrate en nuestro sistema de concreto</p>
+                </div>
+
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    {{ error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+
+                <form method="post" action="/register" class="auth-form">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="name" class="form-label">
+                                <i class="bi bi-person me-2"></i>Nombre Completo
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="name" 
+                                   name="name" 
+                                   placeholder="Juan Pérez"
+                                   required>
+                        </div>
+
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="company" class="form-label">
+                                <i class="bi bi-building me-2"></i>Empresa (Opcional)
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="company" 
+                                   name="company" 
+                                   placeholder="Constructora ABC">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope me-2"></i>Email
+                        </label>
+                        <input type="email" 
+                               class="form-control form-control-lg" 
+                               id="email" 
+                               name="email" 
+                               placeholder="tu@empresa.com"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">
+                            <i class="bi bi-phone me-2"></i>Teléfono
+                        </label>
+                        <input type="tel" 
+                               class="form-control form-control-lg" 
+                               id="phone" 
+                               name="phone" 
+                               placeholder="+1234567890"
+                               required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="bi bi-lock me-2"></i>Contraseña
+                            </label>
+                            <input type="password" 
+                                   class="form-control form-control-lg" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="••••••••"
+                                   required>
+                        </div>
+
+                        <div class="col-12 col-md-6 mb-4">
+                            <label for="confirm_password" class="form-label">
+                                <i class="bi bi-lock-fill me-2"></i>Confirmar Contraseña
+                            </label>
+                            <input type="password" 
+                                   class="form-control form-control-lg" 
+                                   id="confirm_password" 
+                                   name="confirm_password" 
+                                   placeholder="••••••••"
+                                   required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-person-plus me-2"></i>
+                            Crear Cuenta
+                        </button>
+                    </div>
+                </form>
+
+                <div class="auth-footer text-center mt-4">
+                    <p class="text-muted mb-0">
+                        ¿Ya tienes cuenta? 
+                        <a href="/login" class="text-primary text-decoration-none">Inicia sesión aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

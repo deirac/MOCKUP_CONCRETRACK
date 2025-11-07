@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Órdenes de Concreto - {{ project_name }}{% endblock %}
+
+{% block extra_css %}
+<link href="/static/css/orders.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-2">
+                    <i class="bi bi-clipboard-check me-2 text-primary"></i>
+                    Órdenes de Concreto
+                </h1>
+                <p class="text-muted mb-0">Gestión y seguimiento de órdenes de vaciado</p>
+            </div>
+            <div>
+                <button class="btn btn-success me-2" onclick="Orders.showCreateModal()">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Nueva Orden
+                </button>
+                <button class="btn btn-outline-primary" onclick="Orders.loadOrdersData()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    Actualizar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Total Órdenes</h6>
+                        <h3 class="text-primary" id="total-orders">5</h3>
+                    </div>
+                    <div class="icon-container bg-primary">
+                        <i class="bi bi-clipboard-data text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Órdenes Activas</h6>
+                        <h3 class="text-warning" id="active-orders">2</h3>
+                    </div>
+                    <div class="icon-container bg-warning">
+                        <i class="bi bi-clock text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Volumen Hoy</h6>
+                        <h3 class="text-success" id="volume-today">85.5</h3>
+                        <small class="text-muted">m³</small>
+                    </div>
+                    <div class="icon-container bg-success">
+                        <i class="bi bi-water text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title text-muted">Urgentes</h6>
+                        <h3 class="text-danger" id="urgent-orders">1</h3>
+                    </div>
+                    <div class="icon-container bg-danger">
+                        <i class="bi bi-exclamation-triangle text-white"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-3">
+                        <label for="status-filter" class="form-label">Filtrar por Estado</label>
+                        <select class="form-select" id="status-filter" onchange="Orders.filterOrders()">
+                            <option value="all">Todos los estados</option>
+                            <option value="scheduled">Programadas</option>
+                            <option value="preparing">Preparando</option>
+                            <option value="in_progress">En Progreso</option>
+                            <option value="completed">Completadas</option>
+                            <option value="cancelled">Canceladas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="priority-filter" class="form-label">Filtrar por Prioridad</label>
+                        <select class="form-select" id="priority-filter" onchange="Orders.filterOrders()">
+                            <option value="all">Todas las prioridades</option>
+                            <option value="high">Alta</option>
+                            <option value="medium">Media</option>
+                            <option value="low">Baja</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="date-filter" class="form-label">Filtrar por Fecha</label>
+                        <input type="date" class="form-control" id="date-filter" onchange="Orders.filterOrders()">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-outline-secondary w-100" onclick="Orders.clearFilters()">
+                            <i class="bi bi-x-circle me-2"></i>Limpiar Filtros
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-list-ul me-2"></i>
+                    Lista de Órdenes
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Proyecto</th>
+                                <th>Regente</th>
+                                <th>Mezcla</th>
+                                <th>Volumen</th>
+                                <th>Estado</th>
+                                <th>Programación</th>
+                                <th>Prioridad</th>
+                                <th>Planta</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Orders data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="orders-loading" class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="text-muted">Cargando órdenes...</p>
+                </div>
+                
+                <!-- Empty State -->
+                <div id="orders-empty" class="text-center py-5 d-none">
+                    <i class="bi bi-clipboard-x display-4 text-muted mb-3"></i>
+                    <p class="text-muted">No hay órdenes registradas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Detalles de Orden
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderModalBody">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Order Modal -->
+<div class="modal fade" id="createOrderModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>
+                    Crear Nueva Orden
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="create-order-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="project-select" class="form-label">Proyecto *</label>
+                            <select class="form-select" id="project-select" required>
+                                <option value="">Seleccionar proyecto...</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="mix-type" class="form-label">Tipo de Mezcla *</label>
+                            <select class="form-select" id="mix-type" required>
+                                <option value="">Seleccionar mezcla...</option>
+                                <option value="C-20">C-20 - Concreto Normal</option>
+                                <option value="C-25">C-25 - Concreto Estructural</option>
+                                <option value="C-30">C-30 - Concreto High-Strength</option>
+                                <option value="C-35">C-35 - Concreto Premium</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="volume" class="form-label">Volumen (m³) *</label>
+                            <input type="number" class="form-control" id="volume" step="0.1" min="1" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="priority" class="form-label">Prioridad *</label>
+                            <select class="form-select" id="priority" required>
+                                <option value="low">Baja</option>
+                                <option value="medium" selected>Media</option>
+                                <option value="high">Alta</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="duration" class="form-label">Duración Estimada (horas) *</label>
+                            <input type="number" class="form-control" id="duration" step="0.5" min="1" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="scheduled-time" class="form-label">Fecha y Hora Programada *</label>
+                            <input type="datetime-local" class="form-control" id="scheduled-time" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="assigned-plant" class="form-label">Planta Asignada *</label>
+                            <select class="form-select" id="assigned-plant" required>
+                                <option value="">Seleccionar planta...</option>
+                                <option value="Planta Central">Planta Central</option>
+                                <option value="Planta Sur">Planta Sur</option>
+                                <option value="Planta Este">Planta Este</option>
+                                <option value="Planta Oeste">Planta Oeste</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Dirección de Entrega *</label>
+                        <textarea class="form-control" id="address" rows="2" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notas Adicionales</label>
+                        <textarea class="form-control" id="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="Orders.createOrder()">Crear Orden</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/orders.js"></script>
+<script>
+    // Cargar datos al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        Orders.init();
+        Orders.loadOrdersSummary();
+        Orders.loadOrdersData();
+        Orders.loadProjects();
+    });
+</script>
+{% endblock %}
