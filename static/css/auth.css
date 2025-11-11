@@ -192,7 +192,7 @@
 }
 
 /* Responsive adjustments */
-@media (min-width: 768px) {
+@media (max-width: 768px) {
     .auth-container {
         padding: 1rem;
     }
@@ -223,7 +223,7 @@
     }
 }
 
-@media (min-width: 576px) {
+@media (max-width: 576px) {
     .auth-card {
         padding: 1.5rem 1.25rem;
         border-radius: 0.75rem;

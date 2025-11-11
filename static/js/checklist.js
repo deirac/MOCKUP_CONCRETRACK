@@ -105,9 +105,8 @@ const Checklist = (function() {
         const statusMap = {
             'pending': { class: 'status-pending', text: 'Pendiente' },
             'in_progress': { class: 'status-in_progress', text: 'En Progreso' },
-            'completed': { class: 'status-completed', text: 'Completado' },
-            'cancelled': { class: 'status-cancelled', text: 'Cancelado' }
-        };pip 
+            'completed': { class: 'status-completed', text: 'Completado' }
+        };
 
         const statusInfo = statusMap[status] || { class: 'bg-secondary', text: status };
         return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
